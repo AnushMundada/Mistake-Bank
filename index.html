@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Mistake Bank</title>
+<style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #0f172a;
+    color: #e2e8f0;
+    padding: 30px;
+    max-width: 800px;
+    margin: auto;
+  }
+
+  h1 {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  .box {
+    background: #1e293b;
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+  }
+
+  input, textarea {
+    width: 100%;
+    margin: 6px 0;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    background: #334155;
+    color: white;
+  }
+
+  textarea {
+    resize: none;
+    height: 60px;
+  }
+
+  button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    background: #38bdf8;
+    border: none;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+
+  button:hover {
+    background: #0ea5e9;
+  }
+
+  .card {
+    background: #1e293b;
+    padding: 15px;
+    border-radius: 12px;
+    margin-top: 12px;
+    transition: 0.2s;
+  }
+
+  .card:hover {
+    transform: scale(1.02);
+  }
+
+  .q {
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+
+  .meta {
+    font-size: 14px;
+    color: #94a3b8;
+  }
+
+  .mistake {
+    color: #f87171;
+  }
+
+  .fix {
+    color: #4ade80;
+  }
+</style>
+</head>
+<body>
+
+<h1>Mistake Bank</h1>
+
+<input id="search" placeholder="Search..." oninput="render()">
+<input id="q" placeholder="Question">
+<input id="topic" placeholder="Topic">
+<input id="pattern" placeholder="Pattern">
+<input id="mistake" placeholder="Mistake">
+<textarea id="thinking" placeholder="Correct Thinking"></textarea>
+
+<button onclick="add()">Add</button>
+
+<div id="list"></div>
+
+<script>
+let data = JSON.parse(localStorage.getItem("mistakes")) || [];
+
+function add() {
+  const q = document.getElementById('q').value;
+
+  if (!q) return alert("Enter a question");
+
+  const item = {
+    id: Date.now(),
+    q,
+    topic: document.getElementById('topic').value,
+    pattern: document.getElementById('pattern').value,
+    mistake: document.getElementById('mistake').value,
+    thinking: document.getElementById('thinking').value,
+    star: false
+  };
+
+  data.push(item);
+  save();
+  clearInputs();
+  render();
+}
+
+function save() {
+  localStorage.setItem("mistakes", JSON.stringify(data));
+}
+
+function clearInputs() {
+  document.getElementById('q').value = "";
+  document.getElementById('topic').value = "";
+  document.getElementById('pattern').value = "";
+  document.getElementById('mistake').value = "";
+  document.getElementById('thinking').value = "";
+}
+
+function deleteItem(id) {
+  data = data.filter(d => d.id !== id);
+  save();
+  render();
+}
+
+function toggleStar(id) {
+  data = data.map(d => {
+    if (d.id === id) d.star = !d.star;
+    return d;
+  });
+  save();
+  render();
+}
+
+function render() {
+  const list = document.getElementById('list');
+  const search = document.getElementById('search').value.toLowerCase();
+
+  list.innerHTML = "";
+
+  data
+    .filter(d => d.q.toLowerCase().includes(search))
+    .forEach(d => {
+      list.innerHTML += `
+        <div class="card">
+          <div class="q">${d.star ? "⭐ " : ""}${d.q}</div>
+          <div class="meta">${d.topic} • ${d.pattern}</div>
+          <div class="mistake">Mistake: ${d.mistake}</div>
+          <div class="fix">Fix: ${d.thinking}</div>
+          
+          <button onclick="toggleStar(${d.id})">⭐</button>
+          <button onclick="deleteItem(${d.id})">Delete</button>
+        </div>
+      `;
+    });
+}
+
+render();
+</script>
+
+</body>
+</html>
