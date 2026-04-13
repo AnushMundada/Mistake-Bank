@@ -2,6 +2,7 @@
 <html>
 <head>
   <title>Mistake Bank</title>
+
 <style>
   body {
     font-family: -apple-system, BlinkMacSystemFont, sans-serif;
@@ -14,7 +15,7 @@
 
   h1 {
     text-align: center;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
   }
 
   .box {
@@ -35,20 +36,16 @@
   }
 
   textarea {
-    resize: none;
     height: 60px;
   }
 
   button {
-    width: 100%;
-    padding: 12px;
-    margin-top: 10px;
+    padding: 10px;
+    margin-top: 6px;
     background: #38bdf8;
     border: none;
-    border-radius: 10px;
-    font-weight: bold;
+    border-radius: 8px;
     cursor: pointer;
-    transition: 0.2s;
   }
 
   button:hover {
@@ -60,56 +57,70 @@
     padding: 15px;
     border-radius: 12px;
     margin-top: 12px;
-    transition: 0.2s;
-  }
-
-  .card:hover {
-    transform: scale(1.02);
   }
 
   .q {
     font-weight: bold;
-    margin-bottom: 5px;
   }
 
   .meta {
-    font-size: 14px;
     color: #94a3b8;
+    font-size: 14px;
   }
 
-  .mistake {
-    color: #f87171;
-  }
+  .mistake { color: #f87171; }
+  .fix { color: #4ade80; }
 
-  .fix {
-    color: #4ade80;
+  .actions button {
+    width: auto;
+    margin-right: 5px;
   }
 </style>
+
 </head>
 <body>
 
 <h1>Mistake Bank</h1>
 
-<input id="search" placeholder="Search..." oninput="render()">
-<input id="q" placeholder="Question">
-<input id="topic" placeholder="Topic">
-<input id="pattern" placeholder="Pattern">
-<input id="mistake" placeholder="Mistake">
-<textarea id="thinking" placeholder="Correct Thinking"></textarea>
-
-<button onclick="add()">Add</button>
-
-<div id="loginBox">
+<!-- LOGIN -->
+<div class="box" id="loginBox">
   <input id="password" type="password" placeholder="Enter password">
   <button onclick="login()">Unlock</button>
 </div>
 
+<!-- INPUTS (HIDDEN) -->
+<div class="box" id="inputBox" style="display:none;">
+  <input id="q" placeholder="Question">
+  <input id="topic" placeholder="Topic">
+  <input id="pattern" placeholder="Pattern">
+  <input id="mistake" placeholder="Mistake">
+  <textarea id="thinking" placeholder="Correct Thinking"></textarea>
+
+  <button onclick="add()">Add</button>
+</div>
+
+<!-- SEARCH -->
+<input id="search" placeholder="Search..." oninput="render()">
+
+<!-- OUTPUT -->
+<div id="list"></div>
+
 <script>
 let data = JSON.parse(localStorage.getItem("mistakes")) || [];
 
+function login() {
+  const pass = document.getElementById("password").value;
+
+  if (pass === "1234") {
+    document.getElementById("inputBox").style.display = "block";
+    document.getElementById("loginBox").style.display = "none";
+  } else {
+    alert("Wrong password");
+  }
+}
+
 function add() {
   const q = document.getElementById('q').value;
-
   if (!q) return alert("Enter a question");
 
   const item = {
@@ -170,28 +181,17 @@ function render() {
           <div class="meta">${d.topic} • ${d.pattern}</div>
           <div class="mistake">Mistake: ${d.mistake}</div>
           <div class="fix">Fix: ${d.thinking}</div>
-          
-          <button onclick="toggleStar(${d.id})">⭐</button>
-          <button onclick="deleteItem(${d.id})">Delete</button>
+
+          <div class="actions">
+            <button onclick="toggleStar(${d.id})">⭐</button>
+            <button onclick="deleteItem(${d.id})">Delete</button>
+          </div>
         </div>
       `;
     });
 }
 
 render();
-let unlocked = false;
-
-function login() {
-  const pass = document.getElementById("password").value;
-
-  if (pass === "1234") {  // change this password
-    unlocked = true;
-    document.getElementById("inputBox").style.display = "block";
-    document.getElementById("loginBox").style.display = "none";
-  } else {
-    alert("Wrong password");
-  }
-}
 </script>
 
 </body>
