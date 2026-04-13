@@ -99,7 +99,10 @@
 
 <button onclick="add()">Add</button>
 
-<div id="list"></div>
+<div id="loginBox">
+  <input id="password" type="password" placeholder="Enter password">
+  <button onclick="login()">Unlock</button>
+</div>
 
 <script>
 let data = JSON.parse(localStorage.getItem("mistakes")) || [];
@@ -176,6 +179,19 @@ function render() {
 }
 
 render();
+let unlocked = false;
+
+function login() {
+  const pass = document.getElementById("password").value;
+
+  if (pass === "1234") {  // change this password
+    unlocked = true;
+    document.getElementById("inputBox").style.display = "block";
+    document.getElementById("loginBox").style.display = "none";
+  } else {
+    alert("Wrong password");
+  }
+}
 </script>
 
 </body>
